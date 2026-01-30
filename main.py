@@ -2,6 +2,39 @@ import random
 
 
 class DungeonCrawler:
+    # Dictionary with the riddles available to the user
+    RIDDLES = {
+        "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?":
+            "echo",
+        "The more of this there is, the less you see. What is it?":
+            "darkness",
+        "I have keys but no locks, space but no room. You can enter, but you can't go outside. What am I?":
+            "keyboard",
+        "What has to be broken before you can use it?":
+            "egg",
+        "I’m tall when I’m young, and short when I’m old. What am I?":
+            "candle",
+        "What can travel around the world while staying in a corner?":
+            "stamp",
+        "The more you take, the more you leave behind. What are they?":
+            "footsteps",
+        "What has an eye but cannot see?":
+            "needle",
+        "What gets wetter the more it dries?":
+            "towel",
+        "I have branches, but no fruit, trunk, or leaves. What am I?":
+            "bank",
+        "What runs but never walks, has a mouth but never talks?":
+            "river",
+        "What has many teeth but cannot bite?":
+            "comb",
+        "What comes once in a minute, twice in a moment, but never in a thousand years?":
+            "m",
+        "I shave every day, but my beard stays the same. Who am I?":
+            "barber",
+        "What can fill a room but takes up no space?":
+            "light"
+    }
 
     def __init__(self):
 
@@ -15,6 +48,7 @@ class DungeonCrawler:
 
         self.is_running = True
 
+    # Generate what the next room will be
     def generate_room_content(self):
 
         roll = random.random()
@@ -27,6 +61,7 @@ class DungeonCrawler:
 
         return "Empty"
 
+    # Handling the different rooms and what each entails
     def handle_encounter(self, content):
 
         if content == "Monster":
@@ -36,10 +71,16 @@ class DungeonCrawler:
             self.player_hp -= 30
 
         elif content == "Treasure":
+            rand = random.random()
 
-            print("($) You found a Gold Coin!")
-
-            self.inventory.append("Gold")
+            if rand < 0.1:
+                print("(!!) You found a Rare Sword!")
+                self.inventory.append("Rare Sword")
+            if rand < 0.4:
+                print("(+) You found a health potion! +10 health!")
+                self.player_hp += 10
+            else:
+                print("($) You found a Gold Coin!")
 
         elif content == "Trap":
 
@@ -47,6 +88,7 @@ class DungeonCrawler:
 
             self.player_hp -= 10
 
+    # Normal run behavior for the game, runs until dead or outsmarted
     def play(self):
 
         print("--- Welcome to the 'Smart' Dungeon ---")
