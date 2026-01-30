@@ -1,44 +1,49 @@
 import random
+import re
 
 
 class DungeonCrawler:
-    # Dictionary with the riddles available to the user
-    RIDDLES = {
-        "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?":
-            "echo",
-        "The more of this there is, the less you see. What is it?":
-            "darkness",
-        "I have keys but no locks, space but no room. You can enter, but you can't go outside. What am I?":
-            "keyboard",
-        "What has to be broken before you can use it?":
-            "egg",
-        "I’m tall when I’m young, and short when I’m old. What am I?":
-            "candle",
-        "What can travel around the world while staying in a corner?":
-            "stamp",
-        "The more you take, the more you leave behind. What are they?":
-            "footsteps",
-        "What has an eye but cannot see?":
-            "needle",
-        "What gets wetter the more it dries?":
-            "towel",
-        "I have branches, but no fruit, trunk, or leaves. What am I?":
-            "bank",
-        "What runs but never walks, has a mouth but never talks?":
-            "river",
-        "What has many teeth but cannot bite?":
-            "comb",
-        "What comes once in a minute, twice in a moment, but never in a thousand years?":
-            "m",
-        "I shave every day, but my beard stays the same. Who am I?":
-            "barber",
-        "What can fill a room but takes up no space?":
-            "light"
-    }
+    # Riddles available to the user
+    RIDDLES = [
+        "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
+        "The more of this there is, the less you see. What is it?",
+        "I have keys but no locks, space but no room. You can enter, but you can't go outside. What am I?",
+        "What has to be broken before you can use it?",
+        "I’m tall when I’m young, and short when I’m old. What am I?",
+        "What can travel around the world while staying in a corner?",
+        "The more you take, the more you leave behind. What are they?",
+        "What has an eye but cannot see?",
+        "What gets wetter the more it dries?",
+        "I have branches, but no fruit, trunk, or leaves. What am I?",
+        "What runs but never walks, has a mouth but never talks?",
+        "What has many teeth but cannot bite?",
+        "What comes once in a minute, twice in a moment, but never in a thousand years?",
+        "I shave every day, but my beard stays the same. Who am I?",
+        "What can fill a room but takes up no space?"
+    ]
+
+    # Answers to riddles
+    ANSWERS = [
+        ["echo"],
+        ["darkness"],
+        ["keyboard"],
+        ["egg", "eggshell", "shoe", "shoes"],
+        ["candle"],
+        ["stamp"],
+        ["footsteps", "footprints"],
+        ["needle"],
+        ["towel", "sponge"],
+        ["bank"],
+        ["river"],
+        ["comb"],
+        ["\'m\'", "letter m", "letter \'m\'"],
+        ["barber", "a barber"],
+        ["light"]
+    ]
 
     def __init__(self):
         self.player_hp = 100
-        self.outsmarted = 100
+        self.player_intel = 100
         self.inventory = []
         self.dungeon_size = 10
         self.current_room = 0
@@ -61,33 +66,34 @@ class DungeonCrawler:
     def handle_encounter(self, content):
 
         if content == "Monster":
-            print("(!) A wild AI-generated Grue appears!")
+            print("(!) A wild AI-generated Grue appears! -30 health!")
             self.player_hp -= 30
 
         elif content == "Treasure":
-            print("($) You found a Gold Coin!")
-            self.coins += 1
-
             rand = random.random()
 
             if rand < 0.1:
-                print("(!!) You found a Rare Sword!")
+                print("(!!) You found a Rare Sword! +1 Rare Sword")
                 self.inventory.append("Rare Sword")
             if rand < 0.4:
                 print("(+) You found a health potion! +10 health!")
                 self.player_hp += 10
             else:
-                print("($) You found a Gold Coin!")
+                print("($) You found a Gold Coin! +1 Gold Coin")
+                self.coins += 1
 
         elif content == "Trap":
-            print("(X) You stepped on a spike!")
+            print("(X) You stepped on a spike! -10 health!")
             self.player_hp -= 10
 
         elif content == "Riddle":
             if self.give_riddle():
                 self.player_hp += 50
+                self.player_intel += 30
+                print("+50 health and +30 intelligence for answering correctly!")
             else:
-                self.outsmarted -= 50
+                self.player_intel -= 50
+                print("-50 intelligence points for being outsmarted!")
 
     # Normal run behavior for the game, runs until dead or outsmarted
     def play(self):
@@ -96,15 +102,17 @@ class DungeonCrawler:
 
         while self.is_running and self.current_room < self.dungeon_size:
 
-            print(f"\nRoom {self.current_room} | HP: {self.player_hp} | Coins: {self.coins}")
+            print(f"\nRoom {self.current_room + 1} | HP: {self.player_hp} | Intel: {self.player_intel} | Coins: {self.coins}")
+            if len(self.inventory) > 0:
+                print(f"Inventory: {self.inventory}")
             content = self.generate_room_content()
             self.handle_encounter(content)
 
             if self.player_hp <= 0:
-                print("GAME OVER: The AI killed you.")
+                print("GAME OVER: The AI killed you.") # Health <= 0
                 self.is_running = False
-            elif self.outsmarted <= 0:
-                print("GAME OVER: The AI has outsmarted you.")
+            elif self.player_intel <= 0:
+                print("GAME OVER: The AI has outsmarted you.") # Intelligence <= 0
                 self.is_running = False
 
             self.current_room += 1
@@ -114,17 +122,19 @@ class DungeonCrawler:
 
     def give_riddle(self):
         num = random.randint(0, 14)
-        prompt = self.RIDDLES.keys()[num]
-        print(f"{prompt}!")
+        print(f"(R) You found a RIDDLE room! \nRiddle: {self.RIDDLES[num]}")
         guesses = 0
         correct = False
     
-        while guesses < 3 or correct:
-            answer = input(f"{3 - guesses} guesses left. Enter your guess: ")
-            if not (answer == self.RIDDLES[prompt]):
-                print(f"Incorrect. Try again. ")
+        while guesses < 3 and not correct:
+            answer = input(f"{3 - guesses} guesses left. Enter your guess:\n")
+            answer = re.sub(r'[^a-zA-Z0-9]', ' ', answer) # Converts to alphanumeric characters only (Keeps spaces)
+            answer = answer.lower() # Converts all characters to lowercase
+            if not any(answer == a for a in self.ANSWERS[num]):
+                print("Incorrect. Try again. ")
                 guesses += 1
             else:
+                print("Correct!")
                 correct = True
 
         return correct
