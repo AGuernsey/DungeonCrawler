@@ -114,12 +114,13 @@ class DungeonCrawler:
 
     def give_riddle(self):
         num = random.randint(0, 14)
-        prompt = self.RIDDLES.keys()[num]
+        prompts = list(self.RIDDLES.keys())
+        prompt = prompts[num]
         print(f"{prompt}!")
         guesses = 0
         correct = False
     
-        while guesses < 3 or correct:
+        while guesses < 3 and not correct:
             answer = input(f"{3 - guesses} guesses left. Enter your guess: ")
             if not (answer == self.RIDDLES[prompt]):
                 print(f"Incorrect. Try again. ")
