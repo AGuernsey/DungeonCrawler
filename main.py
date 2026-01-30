@@ -112,22 +112,22 @@ class DungeonCrawler:
         if self.player_hp > 0:
             print(f"\nVictory! You finished with {len(self.inventory)} gold.")
 
-def give_riddle():
-    num = random.randint(0, 14)
-    prompt = RIDDLES.keys()[num]
-    print(f"{prompt}!")
-    guesses = 0
-    correct = False
+    def give_riddle(self):
+        num = random.randint(0, 14)
+        prompt = self.RIDDLES.keys()[num]
+        print(f"{prompt}!")
+        guesses = 0
+        correct = False
+    
+        while guesses < 3 or correct:
+            answer = input(f"{3 - guesses} guesses left. Enter your guess: ")
+            if not (answer == self.RIDDLES[prompt]):
+                print(f"Incorrect. Try again. ")
+                guesses += 1
+            else:
+                correct = True
 
-    while guesses < 3 or correct:
-        answer = input(f"{3 - guesses} guesses left. Enter your guess: ")
-        if not (answer == RIDDLES[prompt]):
-            print(f"Incorrect. Try again. ")
-            guesses += 1
-        else:
-            correct = True
-
-    return correct
+        return correct
 
 if __name__ == "__main__":
     game = DungeonCrawler()
