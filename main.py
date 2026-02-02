@@ -48,6 +48,7 @@ class DungeonCrawler:
         self.dungeon_size = 10
         self.current_room = 0
         self.coins = 0
+        self.defense = 0
         self.is_running = True
 
     # Generate what the next room will be
@@ -67,14 +68,15 @@ class DungeonCrawler:
 
         if content == "Monster":
             print("(!) A wild AI-generated Grue appears! -30 health!")
-            self.player_hp -= 30
+            self.player_hp -= 30 + self.defense
 
         elif content == "Treasure":
             rand = random.random()
 
             if rand < 0.1:
-                print("(!!) You found a Rare Sword! +1 Rare Sword")
-                self.inventory.append("Rare Sword")
+                print("(!!) You found a Rare Shield! +1 Rare Shield")
+                self.inventory.append("Rare Shield")
+                self.defense += 10
             if rand < 0.4:
                 print("(+) You found a health potion! +10 health!")
                 self.player_hp += 10
@@ -83,8 +85,8 @@ class DungeonCrawler:
                 self.coins += 1
 
         elif content == "Trap":
-            print("(X) You stepped on a spike! -10 health!")
-            self.player_hp -= 10
+            print("(X) You stepped on a spike! -15 health!")
+            self.player_hp -= 15 + self.defense
 
         elif content == "Riddle":
             if self.give_riddle():
@@ -118,7 +120,7 @@ class DungeonCrawler:
             self.current_room += 1
 
         if self.player_hp > 0:
-            print(f"\nVictory! You finished with {len(self.inventory)} gold.")
+            print(f"\nVictory! You finished with {self.coins} gold.")
 
     def give_riddle(self):
         num = random.randint(0, 14)
