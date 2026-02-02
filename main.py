@@ -1,3 +1,9 @@
+"""
+Class: Programming 4
+Professor: Dr. Shown
+Authors: Abraham Guernsey and Kane McCrory
+File name: main.py
+"""
 import random
 import re
 
