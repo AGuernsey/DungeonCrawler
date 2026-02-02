@@ -1,6 +1,8 @@
 import random
 import re
+import time
 
+from pynput import keyboard
 
 class DungeonCrawler:
     # Riddles available to the user
@@ -38,7 +40,7 @@ class DungeonCrawler:
         ["comb"],
         ["\'m\'", "letter m", "letter \'m\'"],
         ["barber", "a barber"],
-        ["light"]
+        ["light", "darkness", "silence"]
     ]
 
     def __init__(self):
@@ -97,10 +99,7 @@ class DungeonCrawler:
 
     # Normal run behavior for the game, runs until dead or outsmarted
     def play(self):
-
-        print("--- Welcome to the 'Smart' Dungeon ---")
-
-        while self.is_running and self.current_room < self.dungeon_size:
+        if self.is_running and self.current_room < self.dungeon_size:
 
             print(f"\nRoom {self.current_room + 1} | HP: {self.player_hp} | Intel: {self.player_intel} | Coins: {self.coins}")
             if len(self.inventory) > 0:
@@ -116,9 +115,6 @@ class DungeonCrawler:
                 self.is_running = False
 
             self.current_room += 1
-
-        if self.player_hp > 0:
-            print(f"\nVictory! You finished with {len(self.inventory)} gold.")
 
     def give_riddle(self):
         num = random.randint(0, 14)
@@ -139,6 +135,39 @@ class DungeonCrawler:
 
         return correct
 
+# Function called when a key is pressed
+def on_press(key, game_obj):
+    try:
+        if game_obj.is_running:
+            if key.char == 'n':
+                time.sleep(0.3)
+                game_obj.play()
+
+                if game_obj.current_room == game_obj.dungeon_size:
+                    print(f"\nVictory! You finished with {game_obj.coins} gold.")
+                    listener.stop()
+            elif key == keyboard.Key.esc:
+                game_obj.is_running = False
+                listener.stop()
+        else:
+                listener.stop()
+    except AttributeError:
+        # Handle special keys (like arrow keys, etc.)
+        # For simplicity, we only handle 'w' and 's' char keys here
+        pass
+
 if __name__ == "__main__":
     game = DungeonCrawler()
-    game.play()
+
+    # Setup the listener with the callbacks, passing the object instance
+    listener = keyboard.Listener(
+        on_press=lambda key: on_press(key, game)
+    )
+
+    # Start the listener in a separate thread so the main program doesn't block
+    listener.start()
+
+    print("--- Welcome to the 'Smart' Dungeon ---")
+    print("Press 'enter' to move into the next room!")
+    print("Press 'esc' to end the game!")
+    listener.join()
