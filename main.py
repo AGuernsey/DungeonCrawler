@@ -54,7 +54,7 @@ class DungeonCrawler:
         self.dungeon_size = 10
         self.current_room = 0
         self.coins = 0
-        self.defense = 0
+        self.player_defense = 0
         self.is_running = True
 
     # Generate what the next room will be
@@ -73,8 +73,8 @@ class DungeonCrawler:
     def handle_encounter(self, content):
 
         if content == "Monster":
-            print("(!) A wild AI-generated Grue appears! -30 health!")
-            self.player_hp -= 30 + self.defense
+            print(f"(!) A wild AI-generated Grue appears! -{30 - self.player_defense} health!")
+            self.player_hp -= (30 - self.player_defense)
 
         elif content == "Treasure":
             rand = random.random()
@@ -82,7 +82,7 @@ class DungeonCrawler:
             if rand < 0.1:
                 print("(!!) You found a Rare Shield! +1 Rare Shield")
                 self.inventory.append("Rare Shield")
-                self.defense += 10
+                self.player_defense += 10
             if rand < 0.4:
                 print("(+) You found a health potion! +10 health!")
                 self.player_hp += 10
@@ -91,8 +91,8 @@ class DungeonCrawler:
                 self.coins += 1
 
         elif content == "Trap":
-            print("(X) You stepped on a spike! -15 health!")
-            self.player_hp -= 15 + self.defense
+            print(f"(X) You stepped on a spike! -{15 - self.player_defense} health!")
+            self.player_hp -= (15 - self.player_defense)
 
         elif content == "Riddle":
             if self.give_riddle():
@@ -110,7 +110,7 @@ class DungeonCrawler:
 
         while self.is_running and self.current_room < self.dungeon_size:
 
-            print(f"\nRoom {self.current_room + 1} | HP: {self.player_hp} | Intel: {self.player_intel} | Coins: {self.coins}")
+            print(f"\nRoom {self.current_room + 1} | HP: {self.player_hp} | Intel: {self.player_intel} | Defense: {self.player_defense} | Coins: {self.coins}")
             if len(self.inventory) > 0:
                 print(f"Inventory: {self.inventory}")
             content = self.generate_room_content()
