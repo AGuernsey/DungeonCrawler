@@ -11,21 +11,21 @@ import re
 class DungeonCrawler:
     # Riddles available to the user
     RIDDLES = [
-        "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
-        "The more of this there is, the less you see. What is it?",
-        "I have keys but no locks, space but no room. You can enter, but you can't go outside. What am I?",
-        "What has to be broken before you can use it?",
-        "I’m tall when I’m young, and short when I’m old. What am I?",
-        "What can travel around the world while staying in a corner?",
-        "The more you take, the more you leave behind. What are they?",
-        "What has an eye but cannot see?",
-        "What gets wetter the more it dries?",
-        "I have branches, but no fruit, trunk, or leaves. What am I?",
-        "What runs but never walks, has a mouth but never talks?",
-        "What has many teeth but cannot bite?",
-        "What comes once in a minute, twice in a moment, but never in a thousand years?",
-        "I shave every day, but my beard stays the same. Who am I?",
-        "What can fill a room but takes up no space?"
+        "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", #Echo
+        "The more of this there is, the less you see. What is it?", #Darkness
+        "I have keys but no locks, space but no room. You can enter, but you can't go outside. What am I?", #Keyboard
+        "What has to be broken before you can use it?", #Egg, Eggshell, Shoe, Shoes
+        "I’m tall when I’m young, and short when I’m old. What am I?", #Candle
+        "What can travel around the world while staying in a corner?", #Stamp
+        "The more you take, the more you leave behind. What are they?", #Footsteps, Footprints
+        "What has an eye but cannot see?", #Needle
+        "What gets wetter the more it dries?", #Towel, Sponge
+        "I have branches, but no fruit, trunk, or leaves. What am I?", #Bank
+        "What runs but never walks, has a mouth but never talks?", #River
+        "What has many teeth but cannot bite?", #Comb
+        "What comes once in a minute, twice in a moment, but never in a thousand years?", #Letter M
+        "I shave every day, but my beard stays the same. Who am I?", #Barber, A Barber
+        "What can fill a room but takes up no space?" #Light, Darkness, Silence
     ]
 
     # Answers to riddles
