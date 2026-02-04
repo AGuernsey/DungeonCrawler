@@ -1,8 +1,12 @@
+"""
+Class: Programming 4
+Professor: Dr. Shown
+Authors: Abraham Guernsey and Kane McCrory
+File name: main.py
+"""
 import random
 import re
-import time
 
-from pynput import keyboard
 
 class DungeonCrawler:
     # Riddles available to the user
@@ -50,6 +54,7 @@ class DungeonCrawler:
         self.dungeon_size = 10
         self.current_room = 0
         self.coins = 0
+        self.defense = 0
         self.is_running = True
 
     # Generate what the next room will be
@@ -69,14 +74,15 @@ class DungeonCrawler:
 
         if content == "Monster":
             print("(!) A wild AI-generated Grue appears! -30 health!")
-            self.player_hp -= 30
+            self.player_hp -= 30 + self.defense
 
         elif content == "Treasure":
             rand = random.random()
 
             if rand < 0.1:
-                print("(!!) You found a Rare Sword! +1 Rare Sword")
-                self.inventory.append("Rare Sword")
+                print("(!!) You found a Rare Shield! +1 Rare Shield")
+                self.inventory.append("Rare Shield")
+                self.defense += 10
             if rand < 0.4:
                 print("(+) You found a health potion! +10 health!")
                 self.player_hp += 10
@@ -85,8 +91,8 @@ class DungeonCrawler:
                 self.coins += 1
 
         elif content == "Trap":
-            print("(X) You stepped on a spike! -10 health!")
-            self.player_hp -= 10
+            print("(X) You stepped on a spike! -15 health!")
+            self.player_hp -= 15 + self.defense
 
         elif content == "Riddle":
             if self.give_riddle():
@@ -99,7 +105,10 @@ class DungeonCrawler:
 
     # Normal run behavior for the game, runs until dead or outsmarted
     def play(self):
-        if self.is_running and self.current_room < self.dungeon_size:
+
+        print("--- Welcome to the 'Smart' Dungeon ---")
+
+        while self.is_running and self.current_room < self.dungeon_size:
 
             print(f"\nRoom {self.current_room + 1} | HP: {self.player_hp} | Intel: {self.player_intel} | Coins: {self.coins}")
             if len(self.inventory) > 0:
@@ -115,6 +124,9 @@ class DungeonCrawler:
                 self.is_running = False
 
             self.current_room += 1
+
+        if self.player_hp > 0:
+            print(f"\nVictory! You finished with {self.coins} gold.")
 
     def give_riddle(self):
         num = random.randint(0, 14)
@@ -135,39 +147,6 @@ class DungeonCrawler:
 
         return correct
 
-# Function called when a key is pressed
-def on_press(key, game_obj):
-    try:
-        if game_obj.is_running:
-            if key.char == 'n':
-                time.sleep(0.3)
-                game_obj.play()
-
-                if game_obj.current_room == game_obj.dungeon_size:
-                    print(f"\nVictory! You finished with {game_obj.coins} gold.")
-                    listener.stop()
-            elif key == keyboard.Key.esc:
-                game_obj.is_running = False
-                listener.stop()
-        else:
-                listener.stop()
-    except AttributeError:
-        # Handle special keys (like arrow keys, etc.)
-        # For simplicity, we only handle 'w' and 's' char keys here
-        pass
-
 if __name__ == "__main__":
     game = DungeonCrawler()
-
-    # Setup the listener with the callbacks, passing the object instance
-    listener = keyboard.Listener(
-        on_press=lambda key: on_press(key, game)
-    )
-
-    # Start the listener in a separate thread so the main program doesn't block
-    listener.start()
-
-    print("--- Welcome to the 'Smart' Dungeon ---")
-    print("Press 'enter' to move into the next room!")
-    print("Press 'esc' to end the game!")
-    listener.join()
+    game.play()
